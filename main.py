@@ -1,6 +1,7 @@
 import pygame
 from pygame.constants import QUIT, K_DOWN, K_UP, K_LEFT, K_RIGHT
 import random
+from os import listdir
 
 
 pygame.init()
@@ -23,9 +24,11 @@ ORANGE = 255, 127, 0
 RED = 255, 0, 0
 colors = [WHITE, VIOLET, INDIGO, BLUE, YELLOW, ORANGE]
 
+IMGS_PATH = 'goose'
 
-player = pygame.transform.scale(pygame.image.load(
-    'player.png').convert_alpha(), (121, 51))
+player_imgs = [pygame.transform.scale(pygame.image.load(
+    IMGS_PATH + '/' + file).convert_alpha(), (121, 51)) for file in listdir(IMGS_PATH)]
+player = player_imgs[0]
 player_rect = player.get_rect()
 player_speed = 5
 
@@ -68,6 +71,11 @@ bg_speed = 3
 font = pygame.font.SysFont('Verdana', 20)
 socers = 0
 
+CHANGE_IMGS = pygame.USEREVENT + 3
+pygame.time.set_timer(CHANGE_IMGS, 125)
+
+img_index = 0
+
 is_working = True
 
 while is_working:
@@ -83,6 +91,12 @@ while is_working:
 
         if event.type == CREATE_BONUS:
             bonuses.append(create_bonus())
+
+        if event.type == CHANGE_IMGS:
+            img_index += 1
+            if img_index == len(player_imgs):
+                img_index = 0
+            player = player_imgs[img_index]
 
     pressed_keys = pygame.key.get_pressed()
 
@@ -110,6 +124,8 @@ while is_working:
 
         if player_rect.colliderect(enemy[1]):
             enemies.pop(enemies.index(enemy))
+            if socers <= 0:
+                is_working = False
             socers -= 1
 
     for bonus in bonuses:
