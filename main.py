@@ -35,7 +35,7 @@ def create_enemy():
     enemy.fill(RED)
     enemy_rect = pygame.Rect(
         width, random.randint(0, height), *enemy.get_size())
-    enemy_speed = random.randint(2, 5)
+    enemy_speed = random.randint(2, 6)
     return [enemy, enemy_rect, enemy_speed]
 
 
@@ -50,14 +50,17 @@ def create_bonus():
     bonus.fill(GREEN)
     bonus_rect = pygame.Rect(
         random.randint(0, width), -20, *bonus.get_size())
-    bonus_speed = random.randint(2, 5)
+    bonus_speed = random.randint(2, 6)
     return [bonus, bonus_rect, bonus_speed]
 
 
-CREATE_BONUS = pygame.USEREVENT + 1
-pygame.time.set_timer(CREATE_BONUS, 1500)
+CREATE_BONUS = pygame.USEREVENT + 2
+pygame.time.set_timer(CREATE_BONUS, 2500)
 
 bonuses = []
+
+font = pygame.font.SysFont('Verdana', 20)
+socers = 0
 
 is_working = True
 
@@ -79,6 +82,7 @@ while is_working:
 
     main_surface.fill(BLACK)
     main_surface.blit(ball, ball_rect)
+    main_surface.blit(font.render(str(socers), True, WHITE), (width - 30, 0))
 
     for enemy in enemies:
         enemy[1] = enemy[1].move(-enemy[2], 0)
@@ -88,7 +92,8 @@ while is_working:
             enemies.pop(enemies.index(enemy))
 
         if ball_rect.colliderect(enemy[1]):
-            ball.fill(random.choice(colors))
+            enemies.pop(enemies.index(enemy))
+            socers -= 1
 
     for bonus in bonuses:
         bonus[1] = bonus[1].move(0, bonus[2])
@@ -99,7 +104,8 @@ while is_working:
 
         if ball_rect.colliderect(bonus[1]):
             bonuses.pop(bonuses.index(bonus))
-            ball.fill(WHITE)
+            socers += 1
+            
 
     if pressed_keys[K_DOWN] and not ball_rect.bottom >= height:
         ball_rect = ball_rect.move((0, ball_speed))
