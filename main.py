@@ -24,16 +24,18 @@ RED = 255, 0, 0
 colors = [WHITE, VIOLET, INDIGO, BLUE, YELLOW, ORANGE]
 
 
-player = pygame.image.load('player.png').convert_alpha()
+player = pygame.transform.scale(pygame.image.load(
+    'player.png').convert_alpha(), (121, 51))
 player_rect = player.get_rect()
 player_speed = 5
 
 
 def create_enemy():
-    enemy = pygame.image.load('enemy.png').convert_alpha()
+    enemy = pygame.transform.scale(
+        pygame.image.load('enemy.png').convert_alpha(), (139, 50))
     enemy_rect = pygame.Rect(
-        width + 100, random.randint(0, height), *enemy.get_size())
-    enemy_speed = random.randint(2, 6)
+        width + 100, random.randint(10, height - 50), *enemy.get_size())
+    enemy_speed = random.randint(4, 8)
     return [enemy, enemy_rect, enemy_speed]
 
 
@@ -44,9 +46,10 @@ enemies = []
 
 
 def create_bonus():
-    bonus = pygame.image.load('bonus.png').convert_alpha()
+    bonus = pygame.transform.scale(pygame.image.load(
+        'bonus.png').convert_alpha(), (120, 199))
     bonus_rect = pygame.Rect(
-        random.randint(0, width - 50), -100, *bonus.get_size())
+        random.randint(0, width - 80), -100, *bonus.get_size())
     bonus_speed = random.randint(2, 6)
     return [bonus, bonus_rect, bonus_speed]
 
@@ -58,6 +61,9 @@ bonuses = []
 
 bg = pygame.transform.scale(pygame.image.load(
     'background.png').convert(), screen)
+bgX = 0
+bgX2 = bg.get_width()
+bg_speed = 3
 
 font = pygame.font.SysFont('Verdana', 20)
 socers = 0
@@ -80,15 +86,26 @@ while is_working:
 
     pressed_keys = pygame.key.get_pressed()
 
-    main_surface.blit(bg, (0, 0))
+    # main_surface.blit(bg, (0, 0))
+    bgX -= bg_speed
+    bgX2 -= bg_speed
+
+    if bgX < -bg.get_width():
+        bgX = bg.get_width()
+
+    if bgX2 < -bg.get_width():
+        bgX2 = bg.get_width()
+
+    main_surface.blit(bg, (bgX, 0))
+    main_surface.blit(bg, (bgX2, 0))
     main_surface.blit(player, player_rect)
-    main_surface.blit(font.render(str(socers), True, WHITE), (width - 30, 0))
+    main_surface.blit(font.render(str(socers), True, BLACK), (width - 30, 0))
 
     for enemy in enemies:
         enemy[1] = enemy[1].move(-enemy[2], 0)
         main_surface.blit(enemy[0], enemy[1])
 
-        if enemy[1].left < -500:
+        if enemy[1].left < -200:
             enemies.pop(enemies.index(enemy))
 
         if player_rect.colliderect(enemy[1]):
@@ -99,7 +116,7 @@ while is_working:
         bonus[1] = bonus[1].move(0, bonus[2])
         main_surface.blit(bonus[0], bonus[1])
 
-        if bonus[1].bottom > height + 500:
+        if bonus[1].bottom > height + 280:
             bonuses.pop(bonuses.index(bonus))
 
         if player_rect.colliderect(bonus[1]):
