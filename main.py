@@ -25,9 +25,20 @@ RED = 255, 0, 0
 colors = [WHITE, VIOLET, INDIGO, BLUE, YELLOW, ORANGE]
 
 IMGS_PATH = 'goose'
+"""
+    For some reason, this code does not work, although everything was fine before...
+    I know it's not nice to leave code in comments, but I don't care
+player_imgs = [(pygame.transform.scale(pygame.image.load(
+    IMGS_PATH + '/' + file), (121, 51))) for file in listdir(IMGS_PATH)]
+"""
 
-player_imgs = [pygame.transform.scale(pygame.image.load(
-    IMGS_PATH + '/' + file).convert_alpha(), (121, 51)) for file in listdir(IMGS_PATH)]
+# So I fixed it like this
+player_imgs = [pygame.transform.scale(pygame.image.load(r'./goose/1-1.png'), (121, 51)), 
+               pygame.transform.scale(pygame.image.load(r'./goose/1-2.png'), (121, 51)),
+               pygame.transform.scale(pygame.image.load(r'./goose/1-3.png'), (121, 51)),
+               pygame.transform.scale(pygame.image.load(r'./goose/1-4.png'), (121, 51)),
+               pygame.transform.scale(pygame.image.load(r'./goose/1-5.png'), (121, 51)),]
+
 player = player_imgs[0]
 player_rect = player.get_rect()
 player_speed = 5
